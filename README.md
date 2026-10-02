@@ -31,8 +31,8 @@ GitHub delays the schedule of a little-used public repository, often by hours, b
   repository access only `sq9fk/iono-data`, permission **Actions: read and write**. Without a token it only waits.
 - `anteny-sync` (`alpine/git`, `sync.sh`) – shallow clones of the public antenna pages
   ([anteny-sq9um](https://github.com/sq9fk/anteny-sq9um), [anteny-sq9fk](https://github.com/sq9fk/anteny-sq9fk)) in
-  `./www`, refreshed every `SYNC_INTERVAL` seconds (default 900), and an index page with links to both.
-- `anteny-web` (`nginx:alpine`, `nginx.conf`) – serves `./www` on port `WEB_PORT` (default 8090): `http://<NAS>:8090/`;
+  the Docker volume `www`, refreshed every `SYNC_INTERVAL` seconds (default 900), and an index page with links to both.
+- `anteny-web` (`nginx:alpine`, `nginx.conf`) – serves that volume on port `WEB_PORT` (default 8090): `http://<NAS>:8090/`;
   gzip on, `.git` hidden, `Cache-Control: no-cache` so a new deployment shows at once. The pages fetch NOAA, GUGiK and
   this relay directly from the browser; all of them allow any origin, so they work from the NAS address too.
 
