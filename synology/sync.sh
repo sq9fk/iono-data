@@ -1,11 +1,32 @@
 #!/bin/sh
 # Keeps local copies of the antenna simulator pages (public GitHub Pages repositories) in /www for the web server:
-# shallow clone once, then fetch + hard reset every SYNC_INTERVAL seconds; writes /www/index.html with links to both.
+# shallow clone once, then fetch + hard reset every SYNC_INTERVAL seconds; writes /www/index.html (tiles from home.html).
 # Environment: REPOS (space separated, default the two antenna pages), BRANCH (main), SYNC_INTERVAL (s, default 900).
 REPOS="${REPOS:-sq9fk/anteny-sq9um sq9fk/anteny-sq9fk}"
 BRANCH="${BRANCH:-main}"
 SYNC_INTERVAL="${SYNC_INTERVAL:-900}"
 git config --global --add safe.directory '*'
+# home page: tiles from /home.html (markers @VER_<repo>@, @CLS_<repo>@, @EVERY@, @SYNC@), or a plain list without it
+page() {
+  t=/www/index.html.tmp
+  if [ -f /home.html ]; then
+    cp /home.html "$t" || return 1
+    for r in $REPOS; do
+      n="${r#*/}"
+      if [ -f "/www/$n/index.html" ]; then v="wersja $(git -C "/www/$n" log -1 --format='%h · %cd' --date=format:'%Y-%m-%d %H:%M' 2>/dev/null)"; c=""
+      else v="jeszcze nie pobrano"; c="missing"; fi
+      sed -i "s|@VER_$n@|$v|g; s|@CLS_$n@|$c|g" "$t"
+    done
+    sed -i "s|@EVERY@|$((SYNC_INTERVAL / 60))|g; s|@SYNC@|$(date -u '+%Y-%m-%d %H:%M')|g" "$t"
+  else
+    {
+      echo '<!doctype html><html lang="pl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Anteny SQ9UM / SQ9FK</title><h1>Symulatory anten KF</h1>'
+      for r in $REPOS; do n="${r#*/}"; [ -f "/www/$n/index.html" ] && echo "<p><a href=\"$n/\">$n</a></p>"; done
+      echo '</html>'
+    } > "$t" || return 1
+  fi
+  mv "$t" /www/index.html
+}
 while :; do
   for r in $REPOS; do
     d="/www/${r#*/}"
@@ -23,15 +44,6 @@ while :; do
       else echo "$(date -u +%FT%TZ) $r: clone failed"; fi
     fi
   done
-  {
-    echo '<!doctype html><html lang="pl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
-    echo '<title>Anteny SQ9FK / SQ9UM</title><style>body{font:16px/1.5 system-ui,sans-serif;max-width:640px;margin:40px auto;padding:0 16px}a{display:block;margin:8px 0;font-size:18px}small{color:#666}</style>'
-    echo '<h1>Symulatory anten KF</h1>'
-    for r in $REPOS; do
-      n="${r#*/}"
-      [ -f "/www/$n/index.html" ] && echo "<a href=\"$n/\">$n</a><small>wersja $(git -C "/www/$n" log -1 --format='%h z %cd' --date=format:'%Y-%m-%d %H:%M' 2>/dev/null)</small>"
-    done
-    echo "<p><small>Kopie stron z GitHub Pages, odświeżane co $((SYNC_INTERVAL / 60)) min; ostatnio $(date -u '+%Y-%m-%d %H:%M') UTC.</small></p></html>"
-  } > /www/index.html.tmp && mv /www/index.html.tmp /www/index.html
+  page || echo "$(date -u +%FT%TZ) index page not written"
   sleep "$SYNC_INTERVAL"
 done

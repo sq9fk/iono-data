@@ -31,15 +31,19 @@ GitHub delays the schedule of a little-used public repository, often by hours, b
   repository access only `sq9fk/iono-data`, permission **Actions: read and write**. Without a token it only waits.
 - `anteny-sync` (`alpine/git`, `sync.sh`) – shallow clones of the public antenna pages
   ([anteny-sq9um](https://github.com/sq9fk/anteny-sq9um), [anteny-sq9fk](https://github.com/sq9fk/anteny-sq9fk)) in
-  the Docker volume `www`, refreshed every `SYNC_INTERVAL` seconds (default 900), and an index page with links to both.
+  the Docker volume `www`, refreshed every `SYNC_INTERVAL` seconds (default 900), and a home page with a tile for each (`home.html`, styled like
+  the antenna pages, with the version of each copy).
 - `anteny-web` (`nginx:alpine`, `nginx.conf`) – serves that volume on port `WEB_PORT` (default 8090): `http://<NAS>:8090/`;
   gzip on, `.git` hidden, `Cache-Control: no-cache` so a new deployment shows at once. The pages fetch NOAA, GUGiK and
   this relay directly from the browser; all of them allow any origin, so they work from the NAS address too.
+  Traefik labels publish it at `https://anteny.terapiagaska.pl` (`ANTENY_HOST`) with the `cloudflare` certresolver on
+  the external Docker network `frontend` (`TRAEFIK_NETWORK`), as in the terapiagaska project; that network must exist
+  (`docker network create frontend` if there is no Traefik yet).
 
 `.env.example` lists the settings; copy it to `.env` (git-ignored). On Synology: copy the folder to the NAS (e.g.
 `/volume1/docker/sq9fk`), create `.env`, then Container Manager → Project → Create → that folder (it finds
-`docker-compose.yml`) → start. Or over SSH: `sudo docker compose up -d`. For HTTPS or a name, add a reverse proxy rule in
-DSM (Control Panel → Login Portal → Advanced → Reverse Proxy) to `http://localhost:8090`. GitHub's own schedule stays as a
+`docker-compose.yml`) → start. Or over SSH: `sudo docker compose up -d`. The domain needs a DNS record pointing at
+the Traefik host (e.g. in Cloudflare, like the other terapiagaska.pl names). GitHub's own schedule stays as a
 fallback; when both run within 5 minutes the PSK Reporter reports are reused instead of queried again.
 
 Data: PSK Reporter (Philip Gladstone, N1DQ) and its reporting stations; N0NBH (Paul Herrman, hamqsl.com); KC2G (Andrew Rodland), the Global Ionosphere Radio Observatory (GIRO / DIDBase, University of Massachusetts Lowell)

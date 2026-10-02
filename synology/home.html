@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Anteny SQ9UM / SQ9FK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<!-- Home page of the local copies (sync.sh fills the @...@ markers); colours and type as in the antenna pages -->
+<style>
+:root{
+  --bg:#EEF1EF; --panel:#F8FAF9; --ink:#17262B; --muted:#5A6B6F; --line:#C9D2D0;
+  --accent:#0A6C72; --accent-soft:#D3E7E6;
+  --sans:"Barlow Semi Condensed","Arial Narrow",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0F171A; --panel:#152125; --ink:#E1E9E8; --muted:#94A6A8; --line:#2B3B3F;
+    --accent:#4CC3C3; --accent-soft:#16383A;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0F171A; --panel:#152125; --ink:#E1E9E8; --muted:#94A6A8; --line:#2B3B3F;
+  --accent:#4CC3C3; --accent-soft:#16383A;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.45;padding:20px 16px 48px}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;border-bottom:1px solid var(--line);padding-bottom:14px}
+h1{font-size:clamp(26px,4vw,38px);font-weight:700;letter-spacing:-.01em;margin:0;line-height:1.05;text-wrap:balance}
+h1 small{display:block;font-size:15px;font-weight:500;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;margin-bottom:4px}
+.loc{font-family:var(--mono);font-size:13px;color:var(--muted);text-align:right}
+.loc b{color:var(--ink);font-weight:600}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:22px}
+a.tile{display:flex;flex-direction:column;gap:14px;text-decoration:none;color:inherit;background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--accent);border-radius:6px;padding:20px 22px 18px;transition:border-color .15s,box-shadow .15s,transform .15s}
+a.tile:hover{border-color:var(--accent);box-shadow:0 6px 22px color-mix(in srgb,var(--accent) 16%,transparent);transform:translateY(-2px)}
+a.tile:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.call{font-size:clamp(34px,5vw,46px);font-weight:700;letter-spacing:.01em;line-height:1}
+.grid{font-family:var(--mono);font-size:14px;color:var(--accent);font-weight:600;margin-top:6px}
+.where{font-size:15px;color:var(--muted);margin-top:2px}
+.glyph{flex:none;width:92px;height:92px;border-radius:6px;background:var(--accent-soft);display:grid;place-items:center}
+.glyph svg{width:70px;height:70px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
+.tags li{font-size:14px;padding:2px 9px;border:1px solid var(--line);border-radius:999px;background:var(--bg)}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid var(--line);padding-top:12px;margin-top:auto}
+.ver{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.go{font-weight:600;color:var(--accent);white-space:nowrap}
+.go::after{content:" →"}
+.missing{opacity:.55;pointer-events:none}
+footer{font-size:14px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+footer code{font-family:var(--mono);font-size:12.5px}
+@media (max-width:520px){.loc{text-align:left}.glyph{width:64px;height:64px}.glyph svg{width:48px;height:48px}a.tile{padding:16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1><small>Symulacja anten na działce</small>Anteny KF SQ9UM i SQ9FK</h1>
+    <div class="loc"><b>NEC-2 + teren GUGiK</b><br>propagacja na żywo: NOAA, jonosondy, PSK Reporter</div>
+  </header>
+
+  <main class="tiles">
+    <a class="tile @CLS_anteny-sq9um@" href="anteny-sq9um/">
+      <div class="top">
+        <div><div class="call">SQ9UM</div><div class="grid">JO90HH</div><div class="where">ROD Stare Łabędy · maszty M1–M3</div></div>
+        <div class="glyph" aria-hidden="true"><svg viewBox="0 0 70 70"><path d="M14 64V14M35 64V8M56 64V20"/><path d="M14 14 35 8 56 20"/><path d="M8 64h54"/><path d="M28 14h14M49 24h14M7 18h14"/></svg></div>
+      </div>
+      <ul class="tags"><li>delta pionowa i pozioma</li><li>dipol</li><li>Yagi, A3S, hexbeam</li><li>quady i beamy wielopasmowe</li><li>analiza masztów</li><li>propagacja</li></ul>
+      <div class="foot"><span class="ver">@VER_anteny-sq9um@</span><span class="go">Otwórz</span></div>
+    </a>
+
+    <a class="tile @CLS_anteny-sq9fk@" href="anteny-sq9fk/">
+      <div class="top">
+        <div><div class="call">SQ9FK</div><div class="grid">JO90HI</div><div class="where">dz. 102 · maszt Spiderbeam 10 m</div></div>
+        <div class="glyph" aria-hidden="true"><svg viewBox="0 0 70 70"><path d="M35 64V12"/><path d="M35 12 16 54h38z"/><path d="M35 22 22 64M35 22l13 42"/><path d="M8 64h54"/></svg></div>
+      </div>
+      <ul class="tags"><li>delta pionowa i pozioma</li><li>dipol</li><li>hexbeam, quady</li><li>Spiderbeam i beamy wielopasmowe</li><li>analiza masztów</li><li>propagacja</li></ul>
+      <div class="foot"><span class="ver">@VER_anteny-sq9fk@</span><span class="go">Otwórz</span></div>
+    </a>
+  </main>
+
+  <footer>Kopie stron z GitHub Pages (<code>sq9fk/anteny-sq9um</code>, <code>sq9fk/anteny-sq9fk</code>), odświeżane co @EVERY@ min; ostatnio @SYNC@ UTC.</footer>
+</div>
+</body>
+</html>
