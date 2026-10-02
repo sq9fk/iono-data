@@ -8,8 +8,7 @@ WORKFLOW="${WORKFLOW:-iono.yml}"
 REF="${REF:-main}"
 INTERVAL="${INTERVAL:-900}"
 [ "$INTERVAL" -lt 300 ] && INTERVAL=300
-GITHUB_TOKEN=$(printf %s "$GITHUB_TOKEN" | tr -d '
- ')   # a .env saved with Windows line ends would leave a CR in the token
+GITHUB_TOKEN=$(printf %s "$GITHUB_TOKEN" | tr -d '\r\n ')   # a .env saved with Windows line ends would leave a CR in the token
 if [ -z "$GITHUB_TOKEN" ]; then echo "GITHUB_TOKEN is not set (see .env.example)"; exit 1; fi
 URL="https://api.github.com/repos/$REPO/actions/workflows/$WORKFLOW/dispatches"
 echo "$(date -u +%FT%TZ) starting: $REPO $WORKFLOW every $INTERVAL s"
