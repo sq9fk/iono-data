@@ -21,21 +21,26 @@ Also published by the same run:
 - `.github/workflows/iono.yml` – schedule (every 15 minutes), deployment to Pages; one keep-alive commit a month so that
   GitHub does not pause the schedule.
 
-## Trigger from a NAS (Synology)
+## NAS (Synology): relay trigger and local copies of the antenna pages
 
 GitHub delays the schedule of a little-used public repository, often by hours, but runs a dispatched workflow at once.
-`synology/` holds a tiny container that dispatches the workflow every 15 minutes:
+`synology/` is one Docker Compose project with three small containers:
 
-- `docker-compose.yml` – `curlimages/curl` running `trigger.sh` (no image to build, 32 MB memory limit, small logs);
-- `trigger.sh` – `POST /repos/sq9fk/iono-data/actions/workflows/iono.yml/dispatches` every `INTERVAL` seconds (default
-  900, at least 300), logs the HTTP status; `ONCE=1` makes one call for a test;
-- `.env.example` – copy to `.env` with a fine-grained token: repository access only `sq9fk/iono-data`, permission
-  **Actions: read and write**. `.env` is ignored by git.
+- `iono-trigger` (`curlimages/curl`, `trigger.sh`) – dispatches this workflow every `INTERVAL` seconds (default 900, at
+  least 300) and logs the HTTP status; `ONCE=1` makes one call for a test. Needs a fine-grained token in `.env`:
+  repository access only `sq9fk/iono-data`, permission **Actions: read and write**. Without a token it only waits.
+- `anteny-sync` (`alpine/git`, `sync.sh`) – shallow clones of the public antenna pages
+  ([anteny-sq9um](https://github.com/sq9fk/anteny-sq9um), [anteny-sq9fk](https://github.com/sq9fk/anteny-sq9fk)) in
+  `./www`, refreshed every `SYNC_INTERVAL` seconds (default 900), and an index page with links to both.
+- `anteny-web` (`nginx:alpine`, `nginx.conf`) – serves `./www` on port `WEB_PORT` (default 8090): `http://<NAS>:8090/`;
+  gzip on, `.git` hidden, `Cache-Control: no-cache` so a new deployment shows at once. The pages fetch NOAA, GUGiK and
+  this relay directly from the browser; all of them allow any origin, so they work from the NAS address too.
 
-On Synology: copy the folder to the NAS (e.g. `/volume1/docker/iono-trigger`), create `.env`, then Container Manager →
-Project → Create → that folder (it finds `docker-compose.yml`) → Build/Start. Or over SSH: `sudo docker compose up -d`.
-The log of the container shows `dispatched` every 15 minutes. GitHub's own schedule stays as a fallback; when both run
-within 5 minutes the PSK Reporter reports are reused instead of queried again.
+`.env.example` lists the settings; copy it to `.env` (git-ignored). On Synology: copy the folder to the NAS (e.g.
+`/volume1/docker/sq9fk`), create `.env`, then Container Manager → Project → Create → that folder (it finds
+`docker-compose.yml`) → start. Or over SSH: `sudo docker compose up -d`. For HTTPS or a name, add a reverse proxy rule in
+DSM (Control Panel → Login Portal → Advanced → Reverse Proxy) to `http://localhost:8090`. GitHub's own schedule stays as a
+fallback; when both run within 5 minutes the PSK Reporter reports are reused instead of queried again.
 
 Data: PSK Reporter (Philip Gladstone, N1DQ) and its reporting stations; N0NBH (Paul Herrman, hamqsl.com); KC2G (Andrew Rodland), the Global Ionosphere Radio Observatory (GIRO / DIDBase, University of Massachusetts Lowell)
 and the operators of the ionosondes. Please credit them when using the data.
