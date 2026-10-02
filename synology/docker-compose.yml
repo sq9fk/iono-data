@@ -1,0 +1,17 @@
+# Trigger of the iono-data relay for a Synology NAS (Container Manager → Project) or any Docker host.
+# Copy this folder to the NAS, create .env from .env.example with your token, then: docker compose up -d
+services:
+  iono-trigger:
+    image: curlimages/curl:8.10.1
+    container_name: iono-trigger
+    restart: unless-stopped
+    env_file: .env
+    entrypoint: ["/bin/sh", "/trigger.sh"]
+    volumes:
+      - ./trigger.sh:/trigger.sh:ro
+    mem_limit: 32m
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+        max-file: "2"

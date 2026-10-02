@@ -90,6 +90,18 @@ def psk():
     """Reception reports of the last 30 minutes, sender in JO90 (tx) and receiver in JO90 (rx): [band, lat, lon, snr, mode, unix time]
     of the far station. PSK Reporter asks for at most one query every 5 minutes; this runs every 15."""
     import xml.etree.ElementTree as ET
+    # the NAS trigger and GitHub's own schedule may meet: reuse the published reports when they are younger than 5 minutes
+    try:
+        with urllib.request.urlopen(urllib.request.Request('https://sq9fk.github.io/iono-data/psk.json', headers=UA), timeout=30) as r:
+            prev = json.load(r)
+        age = datetime.datetime.now(datetime.timezone.utc) - datetime.datetime.fromisoformat(prev['fetched'].replace('Z', '+00:00'))
+        if age < datetime.timedelta(minutes=5):
+            with open('site/psk.json', 'w', encoding='utf-8') as f:
+                json.dump(prev, f, separators=(',', ':'))
+            print(f'psk: reused ({int(age.total_seconds())} s old)')
+            return
+    except Exception:
+        pass
     out = {}
     for way, side in (('tx', 'senderCallsign'), ('rx', 'receiverCallsign')):
         url = f'https://retrieve.pskreporter.info/query?{side}=JO90&modify=grid&flowStartSeconds=-1800&rronly=1&noactive=1&rptlimit=5000'
