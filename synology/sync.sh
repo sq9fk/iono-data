@@ -2,9 +2,9 @@
 # Keeps local copies of the antenna simulator pages (GitHub repositories, public or private) in /www for the web server:
 # shallow clone once, then every SYNC_INTERVAL seconds a cheap ls-remote and, when the branch moved, fetch + hard reset;
 # writes /www/index.html (tiles from home.html).
-# Environment: REPOS (space separated, default the two antenna pages), BRANCH (main), SYNC_INTERVAL (s, default 60),
+# Environment: REPOS (space separated, default the three antenna pages), BRANCH (main), SYNC_INTERVAL (s, default 60),
 # SYNC_TOKEN (fine-grained token with Contents: read on these repositories, needed only when they are private).
-REPOS="${REPOS:-sq9fk/anteny-sq9um sq9fk/anteny-sq9fk}"
+REPOS="${REPOS:-sq9fk/anteny-sq9um sq9fk/anteny-sq9fk sq9fk/anteny-sp9pdf}"
 BRANCH="${BRANCH:-main}"
 SYNC_INTERVAL="${SYNC_INTERVAL:-60}"
 [ "$SYNC_INTERVAL" -lt 30 ] && SYNC_INTERVAL=30
@@ -32,7 +32,7 @@ page() {
     sed -i "s|@EVERY@|$every|g; s|@SYNC@|$(date -u '+%Y-%m-%d %H:%M')|g" "$t"
   else
     {
-      echo '<!doctype html><html lang="pl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Anteny SQ9UM / SQ9FK</title><h1>Symulatory anten KF</h1>'
+      echo '<!doctype html><html lang="pl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Anteny SQ9UM / SQ9FK / SP9PDF</title><h1>Symulatory anten KF</h1>'
       for r in $REPOS; do n="${r#*/}"; [ -f "/www/$n/index.html" ] && echo "<p><a href=\"$n/\">$n</a></p>"; done
       echo '</html>'
     } > "$t" || return 1

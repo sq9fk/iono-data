@@ -30,10 +30,11 @@ GitHub delays the schedule of a little-used public repository, often by hours, b
   least 300) and logs the HTTP status; `ONCE=1` makes one call for a test. Needs a fine-grained token in `.env`:
   repository access only `sq9fk/iono-data`, permission **Actions: read and write**. Without a token it only waits.
 - `anteny-sync` (`alpine/git`, `sync.sh`) – shallow clones of the public antenna pages
-  ([anteny-sq9um](https://github.com/sq9fk/anteny-sq9um), [anteny-sq9fk](https://github.com/sq9fk/anteny-sq9fk)) in
+  ([anteny-sq9um](https://github.com/sq9fk/anteny-sq9um), [anteny-sq9fk](https://github.com/sq9fk/anteny-sq9fk),
+  [anteny-sp9pdf](https://github.com/sq9fk/anteny-sp9pdf)) in
   the Docker volume `www`: every `SYNC_INTERVAL` seconds (default 60) a cheap `git ls-remote`, and a fetch only when the
   branch moved, so a deployment shows within a minute. Private repositories work with `SYNC_TOKEN` (fine-grained,
-  Contents: read-only on both); the token goes only into an HTTP header of each git call, never into the clones, and a home page with a tile for each (`home.html`, styled like
+  Contents: read-only on all three; a token limited to selected repositories needs the new one added); the token goes only into an HTTP header of each git call, never into the clones, and a home page with a tile for each (`home.html`, styled like
   the antenna pages, with the version of each copy).
 - `anteny-web` (`nginx:alpine`, `nginx.conf`) – serves that volume on port `WEB_PORT` (default 8090): `http://<NAS>:8090/`;
   gzip on, `.git` hidden, `Cache-Control: no-cache` so a new deployment shows at once. The pages fetch NOAA, GUGiK and
