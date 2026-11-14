@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: read
   contents: write
   pages: write
   id-token: write
@@ -19,16 +20,24 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
+      url: ${{ steps.deploy.outputs.page_url || steps.deploy_retry.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Fetch the latest soundings
         run: python3 fetch.py
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: site
       - id: deploy
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
+        continue-on-error: true
+      # Now and then the artifact is not yet listed for the run a moment after the upload: wait and try once more
+      - name: Wait before the second deploy attempt
+        if: steps.deploy.outcome == 'failure'
+        run: sleep 20
+      - id: deploy_retry
+        if: steps.deploy.outcome == 'failure'
+        uses: actions/deploy-pages@v5
       # GitHub pauses the schedule of a public repository after 60 days without a commit: one small commit on the 1st of each month
       - name: Monthly keep-alive commit
         if: github.event_name == 'schedule'
