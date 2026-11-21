@@ -36,7 +36,7 @@ GitHub delays the schedule of a little-used public repository, often by hours, b
   branch moved, so a deployment shows within a minute. Private repositories work with `SYNC_TOKEN` (fine-grained,
   Contents: read-only on all three; a token limited to selected repositories needs the new one added); the token goes only into an HTTP header of each git call, never into the clones, and a home page with a tile for each (`home.html`, styled like
   the antenna pages, with the version of each copy).
-- `anteny-web` (`nginx:alpine`, `nginx.conf`) – serves that volume on port `WEB_PORT` (default 8090): `http://<NAS>:8090/`;
+- `anteny-web` (`nginx:1.30-alpine`, the stable branch; `nginx.conf`) – serves that volume on port `WEB_PORT` (default 8090): `http://<NAS>:8090/`;
   gzip on, `.git` hidden, `Cache-Control: no-cache` so a new deployment shows at once. The pages fetch NOAA, GUGiK and
   this relay directly from the browser; all of them allow any origin, so they work from the NAS address too.
   Traefik labels publish it at `https://anteny.terapiagaska.pl` (`ANTENY_HOST`) with the `cloudflare` certresolver on
