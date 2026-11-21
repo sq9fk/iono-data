@@ -6,7 +6,7 @@
 # Copy this folder to the NAS, create .env from .env.example, then: docker compose up -d
 services:
   iono-trigger:
-    image: curlimages/curl:8.10.1
+    image: curlimages/curl:8.23.0
     container_name: iono-trigger
     restart: unless-stopped
     env_file: .env
@@ -21,7 +21,7 @@ services:
         max-file: "2"
 
   anteny-sync:
-    image: alpine/git:2.45.2
+    image: alpine/git:2.54.1
     container_name: anteny-sync
     restart: unless-stopped
     env_file: .env
@@ -34,7 +34,7 @@ services:
     logging: *logs
 
   anteny-web:
-    image: nginx:1.27-alpine
+    image: nginx:1.30-alpine
     container_name: anteny-web
     restart: unless-stopped
     ports:
